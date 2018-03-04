@@ -2,7 +2,9 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.contrib.auth import models
 
+from isodate import parse_duration, strftime
 import requests
+
 
 from .settings import YOUTUBE_DATA_API_KEY
 
@@ -44,11 +46,15 @@ def search(request):
         'id': ','.join(map(str, videoIds)),  # search result ids as comma separated list
     })
 
-    # combine search result items and detail result items into one list
+    # combine search items, detail items, computed time strings into one list
     items = []
     for search_item, detail_item in zip(search_page.json()['items'], details_page.json()['items']) :
+        iso_duration = detail_item['contentDetails']['duration']
+        time_delta = parse_duration(iso_duration)
+        time_string = strftime(time_delta, '%H:%M:%S')
         items.append({
             'id': search_item['id']['videoId'],
+            'timeString': time_string,
             'snippet': search_item['snippet'],
             'contentDetails': detail_item['contentDetails'],
         })

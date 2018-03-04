@@ -7,17 +7,21 @@
   <body>
     <div id="app">
 
-      <h1>Users</h1>
+      <input v-model="queryString" placeholder="Search" v-on:keyup.enter="submitSearch">
+      <button v-on:click="submitSearch">Search</button>
 
-      <h2>[[ message ]]</h2>
-
-      <ul>
-        {% for user in users %}<li>{{ user.username }}</li>{% endfor %}
-      </ul>
+      <ol>
+        <li v-for="item in this.queryResults">
+          {% verbatim %}
+          <a v-bind:href="'https://www.youtube.com/watch?v=' + item.id">{{ item.snippet.title }} [{{ item.timeString }}]</a> - {{ item.snippet.channelTitle }}
+          {% endverbatim %}
+        </li>
+      </ol>
 
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-resource/dist/vue-resource.js"></script>
     <script src="{% static 'ricketts_queue/ricketts_queue.js' %}"></script>
   </body>
 </html>
